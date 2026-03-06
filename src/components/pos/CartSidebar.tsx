@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useCart } from '../../context/CartContext';
 import { useCustomers, useDiscounts, useCreateOrder } from '../../hooks/usePOS';
 import { Button } from '../ui/Button';
@@ -9,7 +9,7 @@ import '../../styles/CartSidebar.css';
 export function CartSidebar() {
     const {
         items, customerId, discount, paymentMethod, notes,
-        updateItemQuantity, removeItem, clearCart,
+        updateItemQuantity, clearCart,
         setCustomerId, setDiscount, setPaymentMethod, setNotes,
         subtotal, discountAmount, taxAmount, total
     } = useCart();

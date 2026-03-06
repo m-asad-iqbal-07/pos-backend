@@ -1,4 +1,3 @@
-import React from 'react';
 import { useOrder, useUpdateOrderStatus } from '../../hooks/useOrders';
 import { Card, CardContent } from '../ui/Card';
 import { Button } from '../ui/Button';
@@ -30,7 +29,7 @@ export function OrderDetailsModal({ orderId, onClose }: OrderDetailsModalProps) 
             case 'pending':
                 return (
                     <>
-                        <Button variant="danger" outline onClick={() => handleStatusChange('cancelled')} isLoading={updateStatusResult.isPending}>
+                        <Button variant="danger" onClick={() => handleStatusChange('cancelled')} isLoading={updateStatusResult.isPending}>
                             Cancel Order
                         </Button>
                         <Button onClick={() => handleStatusChange('preparing')} isLoading={updateStatusResult.isPending}>
@@ -41,7 +40,7 @@ export function OrderDetailsModal({ orderId, onClose }: OrderDetailsModalProps) 
             case 'preparing':
                 return (
                     <>
-                        <Button variant="danger" outline onClick={() => handleStatusChange('cancelled')} isLoading={updateStatusResult.isPending}>
+                        <Button variant="danger" onClick={() => handleStatusChange('cancelled')} isLoading={updateStatusResult.isPending}>
                             Cancel Order
                         </Button>
                         <Button onClick={() => handleStatusChange('ready')} isLoading={updateStatusResult.isPending}>
@@ -52,7 +51,7 @@ export function OrderDetailsModal({ orderId, onClose }: OrderDetailsModalProps) 
             case 'ready':
                 return (
                     <>
-                        <Button variant="danger" outline onClick={() => handleStatusChange('cancelled')} isLoading={updateStatusResult.isPending}>
+                        <Button variant="danger" onClick={() => handleStatusChange('cancelled')} isLoading={updateStatusResult.isPending}>
                             Cancel Order
                         </Button>
                         <Button onClick={() => handleStatusChange('completed')} isLoading={updateStatusResult.isPending}>

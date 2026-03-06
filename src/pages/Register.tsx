@@ -1,4 +1,3 @@
-import React from 'react';
 import { MenuGrid } from '../components/pos/MenuGrid';
 import { CartSidebar } from '../components/pos/CartSidebar';
 import { CartProvider } from '../context/CartContext';

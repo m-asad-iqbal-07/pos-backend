@@ -1,4 +1,3 @@
-import React from 'react';
 import { useDateFilter } from '../../context/DateFilterContext';
 import { Calendar } from 'lucide-react';
 import '../../styles/PageHeader.css';

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useCategories, useMenuItems } from '../../hooks/usePOS';
 import { Card } from '../ui/Card';
 import { Spinner } from '../ui/Spinner';

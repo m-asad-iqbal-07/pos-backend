@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { MenuItem, Addon } from '../../lib/api';
 import { useAddons } from '../../hooks/usePOS';
 import { useCart } from '../../context/CartContext';

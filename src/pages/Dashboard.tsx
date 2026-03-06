@@ -1,4 +1,3 @@
-import React from 'react';
 import { PageHeader } from '../components/layout/PageHeader';
 import { useDateFilter } from '../context/DateFilterContext';
 import { useDashboardSummary, useInventoryAlerts } from '../hooks/useDashboard';

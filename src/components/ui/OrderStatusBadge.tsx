@@ -1,4 +1,4 @@
-import { Order } from '../lib/api';
+import { Order } from '../../lib/api';
 import { Badge } from './Badge';
 
 export function OrderStatusBadge({ status }: { status: Order['status'] }) {
