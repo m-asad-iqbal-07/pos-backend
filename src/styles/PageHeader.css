@@ -79,3 +79,32 @@
     border-color: var(--brand-primary);
     box-shadow: 0 0 0 1px var(--brand-primary);
 }
+
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 16px;
+    }
+    
+    .date-filter-section {
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+    }
+    
+    .date-presets {
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        padding-right: 0;
+        padding-bottom: 12px;
+        justify-content: center;
+        width: 100%;
+    }
+    
+    .date-inputs {
+        justify-content: center;
+        flex-wrap: wrap;
+        width: 100%;
+    }
+}

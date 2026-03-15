@@ -77,10 +77,10 @@ export default function Orders() {
                 {/* Date and Payment filters */}
                 <Card className="glass-panel" style={{ marginBottom: '16px' }}>
                     <div style={{ padding: '12px 20px', display: 'flex', gap: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-secondary)', fontSize: '0.875rem', width: '100%', '@media (min-width: 768px)': { width: 'auto' } } as React.CSSProperties}>
                             <Filter size={14} /> Filters:
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: '1 1 auto', minWidth: '140px' }}>
                             <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>From</label>
                             <input
                                 type="date"
@@ -93,10 +93,11 @@ export default function Orders() {
                                     background: 'var(--bg-secondary)',
                                     color: 'var(--text-primary)',
                                     fontSize: '0.8rem',
+                                    width: '100%'
                                 }}
                             />
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: '1 1 auto', minWidth: '140px' }}>
                             <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>To</label>
                             <input
                                 type="date"
@@ -109,10 +110,11 @@ export default function Orders() {
                                     background: 'var(--bg-secondary)',
                                     color: 'var(--text-primary)',
                                     fontSize: '0.8rem',
+                                    width: '100%'
                                 }}
                             />
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: '1 1 auto', minWidth: '140px' }}>
                             <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Payment</label>
                             <select
                                 value={paymentFilter}
@@ -124,6 +126,7 @@ export default function Orders() {
                                     background: 'var(--bg-secondary)',
                                     color: 'var(--text-primary)',
                                     fontSize: '0.8rem',
+                                    width: '100%'
                                 }}
                             >
                                 {PAYMENT_OPTIONS.map(p => <option key={p.value} value={p.value}>{p.label}</option>)}
@@ -134,6 +137,7 @@ export default function Orders() {
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => { setDateFrom(''); setDateTo(''); setPaymentFilter('all'); }}
+                                className="w-full md:w-auto mt-2 md:mt-0"
                             >
                                 Clear
                             </Button>

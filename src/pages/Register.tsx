@@ -12,12 +12,12 @@ export default function Register() {
                     description="Create and take new orders."
                 />
 
-                <div className="pos-layout grid h-full" style={{ gridTemplateColumns: 'minmax(0, 1fr) 350px', flex: 1, overflow: 'hidden' }}>
-                    <div className="menu-area h-full overflow-hidden">
+                <div className="pos-layout">
+                    <div className="menu-area">
                         <MenuGrid />
                     </div>
 
-                    <div className="cart-area h-full">
+                    <div className="cart-area">
                         <CartSidebar />
                     </div>
                 </div>

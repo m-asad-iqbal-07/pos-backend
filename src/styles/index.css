@@ -178,4 +178,36 @@ button {
   .page-header {
     padding: 16px;
   }
+
+  /* POS Layout */
+  .pos-layout {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    overflow-y: visible;
+  }
+
+  .menu-area {
+    min-height: 400px;
+    height: 50vh;
+  }
+}
+
+/* Base POS Layout styles (desktop) */
+.pos-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 350px;
+  flex: 1;
+  overflow: hidden;
+  height: 100%;
+}
+
+.menu-area {
+  height: 100%;
+  overflow: hidden;
+}
+
+.cart-area {
+  height: 100%;
+  overflow-y: auto;
 }
