@@ -97,55 +97,81 @@ export function CartSidebar() {
         );
     }
 
+    const [serviceType, setServiceType] = useState<'dine-in' | 'takeaway' | 'delivery'>('dine-in');
+
+    const getImageUrl = (item: any) => {
+        const name = item.menuItem.name.toLowerCase();
+        if (name.includes('espresso')) return '/images/espresso.png';
+        if (name.includes('cappuccino') || name.includes('latte')) return '/images/cappuccino.png';
+        if (name.includes('cold') || name.includes('ice')) return '/images/cold-brew.png';
+        if (name.includes('croissant') || name.includes('cake') || name.includes('pastry')) return '/images/pastry.png';
+        if (name.includes('tea') || name.includes('matcha')) return '/images/tea.png';
+        return '/images/espresso.png';
+    };
+
     return (
-        <div className="cart-sidebar flex flex-col h-full bg-secondary border-l border-color">
-            <div className="cart-header p-6 border-b">
-                <h2 className="text-xl font-bold flex items-center gap-2">
-                    <ShoppingBag /> Current Order
-                </h2>
+        <div className="cart-sidebar flex flex-col bg-secondary border-l border-color">
+            {/* Service Type Tabs */}
+            <div className="service-tabs">
+                <button
+                    className={`service-tab ${serviceType === 'delivery' ? 'active' : ''}`}
+                    onClick={() => setServiceType('delivery')}
+                >
+                    Delivery
+                </button>
+                <button
+                    className={`service-tab ${serviceType === 'dine-in' ? 'active' : ''}`}
+                    onClick={() => setServiceType('dine-in')}
+                >
+                    Dine in
+                </button>
+                <button
+                    className={`service-tab ${serviceType === 'takeaway' ? 'active' : ''}`}
+                    onClick={() => setServiceType('takeaway')}
+                >
+                    Take away
+                </button>
+            </div>
+
+            <div className="cart-header-compact">
+                <h3 className="order-title">Current Order</h3>
                 {items.length > 0 && (
-                    <button onClick={clearCart} className="text-danger text-sm hover:underline mt-2">
-                        Clear all
-                    </button>
+                    <button onClick={clearCart} className="clear-cart-btn">Clear all</button>
                 )}
             </div>
 
-            <div className="cart-items flex-1 overflow-y-auto p-6">
+            <div className="cart-items-receipt flex-1">
                 {items.length === 0 ? (
-                    <div className="empty-cart flex flex-col items-center justify-center text-secondary h-full text-center">
-                        <ShoppingBag size={48} className="mb-4 opacity-50" />
-                        <p>No items selected.</p>
-                        <p className="text-sm mt-2">Click items on the left to add them to the order.</p>
+                    <div className="empty-cart-minimal">
+                        <ShoppingBag size={48} className="mb-4 opacity-20" />
+                        <p>Your cart is empty</p>
                     </div>
                 ) : (
-                    <div className="flex flex-col gap-4">
+                    <div className="receipt-list">
                         {items.map((item) => (
-                            <div key={item.id} className="cart-line-item flex flex-col gap-2 pb-4 border-b">
-                                <div className="flex justify-between items-start">
-                                    <div>
-                                        <h4 className="font-semibold">{item.menuItem.name}</h4>
-                                        <p className="text-sm font-medium" style={{ color: 'var(--brand-primary)' }}>{formatCurrency(item.menuItem.price)}</p>
+                            <div key={item.id} className="receipt-item">
+                                <div className="item-main-row">
+                                    <div className="item-thumbnail">
+                                        <img src={getImageUrl(item)} alt={item.menuItem.name} />
                                     </div>
-                                    <div className="qty-controls flex items-center gap-3 bg-accent rounded-full p-1">
-                                        <button
-                                            onClick={() => updateItemQuantity(item.id, item.quantity - 1)}
-                                            className="qty-btn"
-                                        >
-                                            {item.quantity === 1 ? <Trash2 size={14} style={{ color: 'var(--danger)' }} /> : <Minus size={14} />}
+                                    <div className="item-info-col">
+                                        <h4 className="receipt-item-name">{item.menuItem.name}</h4>
+                                        <p className="receipt-item-price">{formatCurrency(item.menuItem.price)}</p>
+                                    </div>
+                                    <div className="receipt-qty-controls">
+                                        <button onClick={() => updateItemQuantity(item.id, item.quantity - 1)} className="qty-action">
+                                            {item.quantity === 1 ? <Trash2 size={12} /> : <Minus size={12} />}
                                         </button>
-                                        <span className="w-4 text-center text-sm font-medium">{item.quantity}</span>
-                                        <button
-                                            onClick={() => updateItemQuantity(item.id, item.quantity + 1)}
-                                            className="qty-btn"
-                                        >
-                                            <Plus size={14} />
+                                        <span className="qty-value">{item.quantity}</span>
+                                        <button onClick={() => updateItemQuantity(item.id, item.quantity + 1)} className="qty-action">
+                                            <Plus size={12} />
                                         </button>
                                     </div>
                                 </div>
                                 {item.addons.length > 0 && (
-                                    <div className="cart-addons pl-2" style={{ borderLeft: '2px solid var(--brand-primary)', opacity: 0.7 }}>
+                                    <div className="receipt-addons">
                                         {item.addons.map(addon => (
-                                            <div key={addon.id} className="text-xs text-secondary flex justify-between">
+                                            <div key={addon.id} className="addon-line">
                                                 <span>+ {addon.name}</span>
                                                 <span>{formatCurrency(addon.price)}</span>
                                             </div>
@@ -158,117 +184,49 @@ export function CartSidebar() {
                 )}
             </div>
 
-            <div className="cart-footer p-6 border-t bg-primary">
-                <div className="cart-meta flex flex-col gap-3 mb-6">
-                    <div className="meta-row">
-                        <label className="text-sm font-medium text-secondary flex items-center gap-2 mb-1"><User size={14} /> Customer</label>
+            <div className="receipt-footer">
+                <div className="receipt-metadata">
+                    <div className="meta-field">
+                        <User size={14} className="meta-icon" />
                         <select
                             value={customerId || ''}
                             onChange={e => setCustomerId(e.target.value ? Number(e.target.value) : null)}
-                            className="w-full p-2 rounded border border-color bg-secondary text-sm"
+                            className="meta-select"
                         >
-                            <option value="">Walk-in</option>
+                            <option value="">Walk-in Customer</option>
                             {customers?.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                         </select>
                     </div>
-
-                    <div className="meta-row">
-                        <label className="text-sm font-medium text-secondary flex items-center gap-2 mb-1"><Tag size={14} /> Discount</label>
-                        <select
-                            value={discount?.id || ''}
-                            onChange={e => {
-                                const selectedId = Number(e.target.value);
-                                setDiscount(discounts?.find(d => d.id === selectedId) || null);
-                            }}
-                            className="w-full p-2 rounded border border-color bg-secondary text-sm"
-                        >
-                            <option value="">None</option>
-                            {discounts?.map(d => <option key={d.id} value={d.id}>{d.name} ({d.type === 'percentage' ? `${d.value}%` : `$${d.value}`})</option>)}
-                        </select>
-                    </div>
-
-                    <div className="meta-row mt-2">
-                        <label className="text-sm font-medium text-secondary mb-2 block">Payment Method</label>
-                        <div className="flex gap-2">
-                            {[
-                                { id: 'cash', icon: Banknote, label: 'Cash' },
-                                { id: 'card', icon: CreditCard, label: 'Card' },
-                                { id: 'mobile', icon: Smartphone, label: 'Mobile' }
-                            ].map(method => (
-                                <button
-                                    key={method.id}
-                                    onClick={() => setPaymentMethod(method.id as any)}
-                                    style={{
-                                        flex: 1,
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        alignItems: 'center',
-                                        padding: '8px',
-                                        borderRadius: 'var(--radius-md)',
-                                        border: paymentMethod === method.id ? '2px solid var(--brand-primary)' : '1px solid var(--border-color)',
-                                        background: paymentMethod === method.id ? 'var(--brand-secondary)' : 'var(--bg-secondary)',
-                                        color: paymentMethod === method.id ? 'var(--brand-primary)' : 'var(--text-secondary)',
-                                        cursor: 'pointer',
-                                        transition: 'all 0.15s ease',
-                                    }}
-                                >
-                                    <method.icon size={16} style={{ marginBottom: '4px' }} />
-                                    <span style={{ fontSize: '0.75rem' }}>{method.label}</span>
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    <div className="meta-row">
-                        <label className="text-sm font-medium text-secondary mb-1 block">Notes (optional)</label>
-                        <textarea
-                            value={notes}
-                            onChange={e => setNotes(e.target.value)}
-                            rows={2}
-                            placeholder="Special instructions..."
-                            style={{
-                                width: '100%',
-                                padding: '8px',
-                                borderRadius: 'var(--radius-md)',
-                                border: '1px solid var(--border-color)',
-                                background: 'var(--bg-secondary)',
-                                color: 'var(--text-primary)',
-                                fontSize: '0.875rem',
-                                resize: 'none',
-                            }}
-                        />
-                    </div>
                 </div>
 
-                <div className="cart-totals pt-4 border-t border-color flex flex-col gap-2">
-                    <div className="flex justify-between text-sm text-secondary">
-                        <span>Subtotal</span>
+                <div className="receipt-summary">
+                    <div className="summary-row">
+                        <span>Items</span>
                         <span>{formatCurrency(subtotal)}</span>
                     </div>
                     {discountAmount > 0 && (
-                        <div className="flex justify-between text-sm font-medium" style={{ color: 'var(--success)' }}>
-                            <span>Discount ({discount?.name})</span>
+                        <div className="summary-row discount">
+                            <span>Discount</span>
                             <span>-{formatCurrency(discountAmount)}</span>
                         </div>
                     )}
-                    <div className="flex justify-between text-sm text-secondary">
-                        <span>Tax (8%)</span>
+                    <div className="summary-row">
+                        <span>Tax</span>
                         <span>{formatCurrency(taxAmount)}</span>
                     </div>
-                    <div className="flex justify-between font-bold text-xl mt-2 pt-2 border-t border-color" style={{ color: 'var(--text-primary)' }}>
+                    <div className="summary-row total-row">
                         <span>Total</span>
                         <span>{formatCurrency(total)}</span>
                     </div>
                 </div>
 
                 <Button
-                    className="w-full mt-6"
-                    size="lg"
+                    className="place-order-btn"
                     disabled={items.length === 0}
                     isLoading={createOrderMutation.isPending}
                     onClick={handleSubmit}
                 >
-                    Charge {formatCurrency(total)}
+                    Place an order
                 </Button>
             </div>
         </div>

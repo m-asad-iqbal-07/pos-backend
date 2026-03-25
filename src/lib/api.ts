@@ -1,6 +1,9 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "https://philo-coffee-shop-production-dd93.up.railway.app/api/v1";
+// Use environment variable or default to Railway deployed backend
+const API_BASE_URL = import.meta.env.VITE_API_URL || "https://pos-b-production-2ff9.up.railway.app/api/v1";
+
+console.log('🔗 API Base URL:', API_BASE_URL);
 
 export const apiClient = axios.create({
     baseURL: API_BASE_URL,
@@ -110,4 +113,127 @@ export interface PaginatedResponse<T> {
     page: number;
     per_page: number;
     total_pages: number;
+}
+
+// ============ Shifts ============
+export interface Shift {
+    id: number;
+    opening_balance: number;
+    closing_balance: number | null;
+    total_cash_out: number | null;
+    status: 'open' | 'closed';
+    opened_at: string;
+    closed_at: string | null;
+}
+
+export interface ShiftCreate {
+    opening_balance: number;
+}
+
+export interface ShiftClose {
+    closing_balance: number;
+    total_cash_out: number;
+}
+
+// ============ Expenses ============
+export interface Expense {
+    id: number;
+    description: string;
+    category: string;
+    amount: number;
+    date: string;
+    shift_id: number | null;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface ExpenseCreate {
+    description: string;
+    category: string;
+    amount: number;
+    date: string;
+    shift_id?: number | null;
+}
+
+export interface ExpenseUpdate {
+    description?: string;
+    category?: string;
+    amount?: number;
+    date?: string;
+    shift_id?: number | null;
+}
+
+// ============ Dashboard Data Structures ============
+export interface OrderTrend {
+    date: string;
+    order_count: number;
+    revenue: number;
+}
+
+export interface TopItem {
+    item_id: number;
+    item_name: string;
+    quantity_sold: number;
+    revenue: number;
+}
+
+export interface TopCategory {
+    category_id: number;
+    category_name: string;
+    revenue: number;
+}
+
+export interface TopCustomer {
+    customer_id: number;
+    customer_name: string;
+    orders_count: number;
+    total_spent: number;
+}
+
+export interface HourlySales {
+    hour: number;
+    sales_count: number;
+    revenue: number;
+}
+
+export interface PaymentBreakdown {
+    payment_method: string;
+    count: number;
+    amount: number;
+}
+
+export interface RevenueBreakdown {
+    category: string;
+    revenue: number;
+}
+
+export interface InventoryAlert {
+    item_id: number;
+    item_name: string;
+    current_stock: number;
+    min_threshold: number;
+}
+
+export interface ProfitLoss {
+    revenue: number;
+    expenses: number;
+    profit: number;
+    profit_margin: number;
+}
+
+export interface ShiftSummaryItem {
+    shift_id: number;
+    date: string;
+    opening_balance: number;
+    closing_balance: number | null;
+    orders_count: number;
+    revenue: number;
+}
+
+export interface CustomerInsight {
+    customer_id: number;
+    customer_name: string;
+    total_orders: number;
+    total_spent: number;
+    last_order_date: string;
 }

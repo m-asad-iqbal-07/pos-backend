@@ -9,15 +9,14 @@
 
 .ui-table th {
     text-align: left;
-    padding: 12px 24px;
+    padding: 16px 24px;
     font-size: 0.75rem;
-    font-weight: 600;
+    font-weight: 700;
     color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    background-color: var(--bg-accent);
-    border-bottom: 1px solid var(--border-color);
-    border-top: 1px solid var(--border-color);
+    background-color: var(--bg-primary);
+    border-bottom: 2px solid var(--border-color);
 }
 
 .ui-table td {

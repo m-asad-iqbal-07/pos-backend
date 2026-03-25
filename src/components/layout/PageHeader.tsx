@@ -6,15 +6,19 @@ interface PageHeaderProps {
     title: string;
     description?: string;
     showDateFilter?: boolean;
+    icon?: React.ElementType;
 }
 
-export function PageHeader({ title, description, showDateFilter = false }: PageHeaderProps) {
+export function PageHeader({ title, description, showDateFilter = false, icon: Icon }: PageHeaderProps) {
     const { startDate, endDate, setStartDate, setEndDate, setPreset } = useDateFilter();
 
     return (
         <header className="page-header">
             <div className="page-title-section">
-                <h1 className="page-title">{title}</h1>
+                <div className="flex items-center gap-3">
+                    {Icon && <div className="page-header-icon"><Icon size={28} /></div>}
+                    <h1 className="page-title">{title}</h1>
+                </div>
                 {description && <p className="page-description">{description}</p>}
             </div>
 

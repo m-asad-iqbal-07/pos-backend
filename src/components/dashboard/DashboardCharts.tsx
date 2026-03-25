@@ -12,12 +12,12 @@ import {
     useHourlyHeatmap, useTopCategories, useRevenue,
 } from '../../hooks/useDashboard';
 import { useDateFilter } from '../../context/DateFilterContext';
-import { Card, CardHeader, CardTitle, CardContent } from '../ui/Card';
+import { Card, CardHeader, CardContent } from '../ui/Card';
 import { Spinner } from '../ui/Spinner';
 
-const COLORS = ['#c2410c', '#4f46e5', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4'];
+const COLORS = ['#8b5e3c', '#bc6c25', '#dda15e', '#606c38', '#4b3832', '#967969'];
+const GRID_COLOR = '#ede0d4';
 
-// Recharts calls tickFormatter with raw data values - handle non-date strings safely
 function formatAxisDate(val: string): string {
     if (!val || typeof val !== 'string') return String(val ?? '');
     const d = new Date(val);
@@ -26,95 +26,102 @@ function formatAxisDate(val: string): string {
 }
 
 const tooltipStyle = {
-    background: 'var(--bg-secondary)',
-    border: '1px solid var(--border-color)',
-    borderRadius: '8px',
+    background: '#ffffff',
+    border: 'none',
+    borderRadius: '12px',
+    boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)',
+    padding: '8px 12px',
 };
 
-export function DashboardCharts() {
+interface DashboardChartsProps {
+    hideHeader?: boolean;
+}
+
+export function DashboardCharts({ hideHeader = false }: DashboardChartsProps) {
     const { startDate, endDate } = useDateFilter();
 
-    // All 6 real API calls
-    // order-trends: [{date, order_count, revenue, ...}]
     const { data: orderTrends, isLoading: loadingTrends } = useOrderTrends({ startDate, endDate });
-    // revenue: [{period, revenue, order_count, avg_order_value}]
     const { data: revenue, isLoading: loadingRevenue } = useRevenue({ startDate, endDate });
-    // top-items: [{name, qty_sold, revenue, ...}]
     const { data: topItems, isLoading: loadingItems } = useTopItems({ startDate, endDate });
-    // payment-breakdown: [{method, count, total_amount, percentage}]
     const { data: payments, isLoading: loadingPayments } = usePaymentBreakdown({ startDate, endDate });
-    // hourly-heatmap: [{hour, order_count, revenue, ...}]
     const { data: heatmap, isLoading: loadingHeatmap } = useHourlyHeatmap({ startDate, endDate });
-    // top-categories: [{name, total_revenue, order_count, qty_sold}]
     const { data: topCategories, isLoading: loadingCategories } = useTopCategories({ startDate, endDate });
 
     return (
-        <>
-            {/* Row 1: Revenue (period + revenue) | Order Trends (date + order_count) */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
-                <Card className="chart-card glass-panel">
-                    <CardHeader><CardTitle>Revenue Over Time</CardTitle></CardHeader>
-                    <CardContent>
-                        <div style={{ height: '270px' }}>
-                            {loadingRevenue ? <Spinner fullScreen /> : (
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <LineChart data={revenue} margin={{ top: 5, right: 20, bottom: 5, left: 10 }}>
-                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
-                                        <XAxis dataKey="period" tickFormatter={formatAxisDate} tick={{ fill: 'var(--text-secondary)', fontSize: 11 }} />
-                                        <YAxis tickFormatter={(v) => `$${v}`} tick={{ fill: 'var(--text-secondary)', fontSize: 11 }} />
-                                        <Tooltip
-                                            formatter={(v: number) => [formatCurrency(v), 'Revenue']}
-                                            labelFormatter={formatAxisDate}
-                                            contentStyle={tooltipStyle}
-                                        />
-                                        <Line type="monotone" dataKey="revenue" stroke="var(--brand-primary)" strokeWidth={3} dot={{ r: 2 }} activeDot={{ r: 6 }} />
-                                    </LineChart>
-                                </ResponsiveContainer>
-                            )}
-                        </div>
-                    </CardContent>
-                </Card>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            {/* Main Performance Chart */}
+            <Card className="chart-card">
+                {!hideHeader && (
+                    <div className="flex justify-between items-center mb-6">
+                        <h3 className="text-lg font-bold">Revenue & Orders Performance</h3>
+                    </div>
+                )}
+                <CardContent>
+                    <div style={{ height: '350px' }}>
+                        {loadingRevenue || loadingTrends ? <Spinner /> : (
+                            <ResponsiveContainer width="100%" height="100%">
+                                <LineChart data={revenue} margin={{ top: 20, right: 30, bottom: 20, left: 10 }}>
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={GRID_COLOR} />
+                                    <XAxis
+                                        dataKey="period"
+                                        tickFormatter={formatAxisDate}
+                                        axisLine={false}
+                                        tickLine={false}
+                                        tick={{ fill: '#8c7365', fontSize: 12 }}
+                                        dy={10}
+                                    />
+                                    <YAxis
+                                        axisLine={false}
+                                        tickLine={false}
+                                        tickFormatter={(v) => `$${v}`}
+                                        tick={{ fill: '#8c7365', fontSize: 12 }}
+                                    />
+                                    <Tooltip
+                                        formatter={(v: number) => [formatCurrency(v), 'Revenue']}
+                                        labelFormatter={formatAxisDate}
+                                        contentStyle={tooltipStyle}
+                                    />
+                                    <Legend verticalAlign="top" height={36} iconType="circle" />
+                                    <Line
+                                        name="Daily Revenue"
+                                        type="monotone"
+                                        dataKey="revenue"
+                                        stroke="#d1733e"
+                                        strokeWidth={4}
+                                        dot={{ r: 4, strokeWidth: 2, fill: '#fff' }}
+                                        activeDot={{ r: 8 }}
+                                    />
+                                    <Line
+                                        name="Order Volume"
+                                        type="monotone"
+                                        dataKey="order_count"
+                                        stroke="#3d2b1f"
+                                        strokeWidth={4}
+                                        dot={{ r: 4, strokeWidth: 2, fill: '#fff' }}
+                                        activeDot={{ r: 8 }}
+                                    />
+                                </LineChart>
+                            </ResponsiveContainer>
+                        )}
+                    </div>
+                </CardContent>
+            </Card>
 
-                <Card className="chart-card glass-panel">
-                    <CardHeader><CardTitle>Daily Order Trends</CardTitle></CardHeader>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+                <Card className="chart-card">
+                    <div className="ui-card-header">
+                        <h3 className="ui-card-title">Top Selling Items</h3>
+                    </div>
                     <CardContent>
-                        <div style={{ height: '270px' }}>
-                            {loadingTrends ? <Spinner fullScreen /> : (
+                        <div style={{ height: '300px' }}>
+                            {loadingItems ? <Spinner /> : (
                                 <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart data={orderTrends} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
-                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
-                                        {/* order-trends uses "date" not "period" */}
-                                        <XAxis dataKey="date" tickFormatter={formatAxisDate} tick={{ fill: 'var(--text-secondary)', fontSize: 11 }} />
-                                        <YAxis tick={{ fill: 'var(--text-secondary)', fontSize: 11 }} />
-                                        <Tooltip
-                                            formatter={(v: number, name) => [v, name === 'order_count' ? 'Orders' : 'Revenue']}
-                                            labelFormatter={formatAxisDate}
-                                            contentStyle={tooltipStyle}
-                                        />
-                                        <Legend formatter={(v) => v === 'order_count' ? 'Orders' : 'Revenue'} />
-                                        <Bar dataKey="order_count" fill="#4f46e5" radius={[4, 4, 0, 0]} name="order_count" />
-                                    </BarChart>
-                                </ResponsiveContainer>
-                            )}
-                        </div>
-                    </CardContent>
-                </Card>
-            </div>
-
-            {/* Row 2: Top Items (name + qty_sold) | Payment Breakdown (method + count) */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
-                <Card className="chart-card glass-panel">
-                    <CardHeader><CardTitle>Top Selling Items</CardTitle></CardHeader>
-                    <CardContent>
-                        <div style={{ height: '270px' }}>
-                            {loadingItems ? <Spinner fullScreen /> : (
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart data={topItems} layout="vertical" margin={{ top: 5, right: 30, left: 60, bottom: 5 }}>
-                                        <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="var(--border-color)" />
-                                        <XAxis type="number" tick={{ fill: 'var(--text-secondary)', fontSize: 11 }} />
-                                        <YAxis dataKey="name" type="category" tick={{ fill: 'var(--text-primary)', fontSize: 11 }} width={120} />
-                                        <Tooltip formatter={(v: number) => [v, 'Qty Sold']} contentStyle={tooltipStyle} />
-                                        <Bar dataKey="qty_sold" fill="var(--brand-primary)" radius={[0, 4, 4, 0]}>
+                                    <BarChart data={topItems} layout="vertical" margin={{ top: 5, right: 10, left: 40, bottom: 5 }}>
+                                        <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke={GRID_COLOR} />
+                                        <XAxis type="number" hide />
+                                        <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{ fill: '#3d2b1f', fontSize: 12 }} width={100} />
+                                        <Tooltip cursor={{ fill: '#f9fafb' }} contentStyle={tooltipStyle} />
+                                        <Bar dataKey="qty_sold" fill="#f97316" radius={[0, 10, 10, 0]} barSize={20}>
                                             {topItems?.map((_: any, i: number) => (
                                                 <Cell key={i} fill={COLORS[i % COLORS.length]} />
                                             ))}
@@ -126,34 +133,29 @@ export function DashboardCharts() {
                     </CardContent>
                 </Card>
 
-                <Card className="chart-card glass-panel">
-                    <CardHeader><CardTitle>Payment Methods</CardTitle></CardHeader>
+                <Card className="chart-card">
+                    <div className="ui-card-header">
+                        <h3 className="ui-card-title">Payment Methods</h3>
+                    </div>
                     <CardContent>
-                        <div style={{ height: '270px' }}>
-                            {loadingPayments ? <Spinner fullScreen /> : (
+                        <div style={{ height: '300px' }}>
+                            {loadingPayments ? <Spinner /> : (
                                 <ResponsiveContainer width="100%" height="100%">
                                     <PieChart>
-                                        {/* payment uses "method" as name key and "count" as value */}
                                         <Pie
                                             data={payments}
                                             cx="50%" cy="50%"
-                                            innerRadius={60} outerRadius={95}
-                                            paddingAngle={5}
+                                            innerRadius={70} outerRadius={100}
+                                            paddingAngle={8}
                                             dataKey="count"
                                             nameKey="method"
-                                            label={({ method, percentage }: any) => `${method} ${percentage}%`}
                                         >
                                             {payments?.map((_: any, i: number) => (
-                                                <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                                                <Cell key={i} fill={COLORS[i % COLORS.length]} cornerRadius={8} />
                                             ))}
                                         </Pie>
-                                        <Tooltip
-                                            formatter={(v: number, name: string, props: any) => [
-                                                `${v} orders • ${formatCurrency(props.payload.total_amount)}`,
-                                                (name || '').charAt(0).toUpperCase() + (name || '').slice(1)
-                                            ]}
-                                            contentStyle={tooltipStyle}
-                                        />
+                                        <Tooltip contentStyle={tooltipStyle} />
+                                        <Legend verticalAlign="bottom" iconType="circle" />
                                     </PieChart>
                                 </ResponsiveContainer>
                             )}
@@ -162,28 +164,29 @@ export function DashboardCharts() {
                 </Card>
             </div>
 
-            {/* Row 3: Hourly Heatmap (hour + order_count) | Top Categories (name + total_revenue) */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
-                <Card className="chart-card glass-panel">
-                    <CardHeader><CardTitle>Hourly Order Heatmap</CardTitle></CardHeader>
+            <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: '24px' }}>
+                <Card className="chart-card">
+                    <div className="ui-card-header">
+                        <h3 className="ui-card-title">Busy Hours (Orders)</h3>
+                    </div>
                     <CardContent>
-                        <div style={{ height: '260px' }}>
-                            {loadingHeatmap ? <Spinner fullScreen /> : (
+                        <div style={{ height: '280px' }}>
+                            {loadingHeatmap ? <Spinner /> : (
                                 <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart data={heatmap} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
-                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
-                                        <XAxis dataKey="hour" tickFormatter={(v) => `${v}h`} tick={{ fill: 'var(--text-secondary)', fontSize: 10 }} />
-                                        <YAxis tick={{ fill: 'var(--text-secondary)', fontSize: 11 }} />
+                                    <BarChart data={heatmap} margin={{ top: 20, right: 10, left: 0, bottom: 0 }}>
+                                        <XAxis dataKey="hour" tickFormatter={(v) => `${v}h`} axisLine={false} tickLine={false} tick={{ fill: '#8c7365', fontSize: 11 }} />
+                                        <YAxis hide />
                                         <Tooltip
+                                            cursor={{ fill: '#f9fafb' }}
                                             formatter={(v: number) => [v, 'Orders']}
                                             labelFormatter={(l) => `${l}:00 – ${l}:59`}
                                             contentStyle={tooltipStyle}
                                         />
-                                        <Bar dataKey="order_count" radius={[4, 4, 0, 0]}>
+                                        <Bar dataKey="order_count" radius={[10, 10, 0, 0]} barSize={24}>
                                             {heatmap?.map((entry: any, i: number) => {
                                                 const max = Math.max(...(heatmap?.map((h: any) => h.order_count) || [1]));
-                                                const opacity = entry.order_count === 0 ? 0.1 : 0.25 + (entry.order_count / max) * 0.75;
-                                                return <Cell key={i} fill={`rgba(6,182,212,${opacity})`} />;
+                                                const isActive = entry.order_count / max > 0.7;
+                                                return <Cell key={i} fill={isActive ? '#8b5e3c' : '#f3e9dc'} />;
                                             })}
                                         </Bar>
                                     </BarChart>
@@ -193,17 +196,18 @@ export function DashboardCharts() {
                     </CardContent>
                 </Card>
 
-                <Card className="chart-card glass-panel">
-                    <CardHeader><CardTitle>Revenue by Category</CardTitle></CardHeader>
+                <Card className="chart-card">
+                    <div className="ui-card-header">
+                        <h3 className="ui-card-title">Category Revenue</h3>
+                    </div>
                     <CardContent>
-                        <div style={{ height: '260px' }}>
-                            {loadingCategories ? <Spinner fullScreen /> : (
+                        <div style={{ height: '280px' }}>
+                            {loadingCategories ? <Spinner /> : (
                                 <ResponsiveContainer width="100%" height="100%">
-                                    {/* top-categories uses "total_revenue" not "revenue" */}
                                     <RadarChart data={topCategories} margin={{ top: 10, right: 30, left: 30, bottom: 10 }}>
-                                        <PolarGrid stroke="var(--border-color)" />
-                                        <PolarAngleAxis dataKey="name" tick={{ fill: 'var(--text-secondary)', fontSize: 11 }} />
-                                        <Radar name="Revenue" dataKey="total_revenue" stroke="var(--brand-primary)" fill="var(--brand-primary)" fillOpacity={0.35} />
+                                        <PolarGrid stroke={GRID_COLOR} />
+                                        <PolarAngleAxis dataKey="name" tick={{ fill: '#8c7365', fontSize: 11 }} />
+                                        <Radar name="Revenue" dataKey="total_revenue" stroke="#8b5e3c" fill="#8b5e3c" fillOpacity={0.2} />
                                         <Tooltip formatter={(v: number) => [formatCurrency(v), 'Revenue']} contentStyle={tooltipStyle} />
                                     </RadarChart>
                                 </ResponsiveContainer>
@@ -212,6 +216,7 @@ export function DashboardCharts() {
                     </CardContent>
                 </Card>
             </div>
-        </>
+        </div>
     );
 }
+

@@ -1,0 +1,127 @@
+.main-header {
+    height: 100px;
+    background-color: var(--bg-primary);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2.5rem;
+    width: 100%;
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    background: var(--bg-accent);
+    padding: 0.8rem 1.75rem;
+    border-radius: var(--radius-full);
+    width: 100%;
+    max-width: 650px;
+    gap: 1.25rem;
+    transition: all var(--transition-normal);
+}
+
+.search-container:focus-within {
+    background: #ffffff;
+    box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.05);
+}
+
+.search-icon {
+    color: var(--text-secondary);
+}
+
+.search-input {
+    border: none;
+    background: transparent;
+    width: 100%;
+    outline: none;
+    font-size: 1.15rem;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.search-input::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.6;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.icon-btn-v2 {
+    position: relative;
+    width: 54px;
+    height: 54px;
+    background: var(--bg-accent);
+    border: none;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.icon-btn-v2:hover {
+    background: #ffffff;
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.dot-badge {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 11px;
+    height: 11px;
+    background-color: var(--brand-primary);
+    border: 2.5px solid var(--bg-accent);
+    border-radius: 50%;
+}
+
+.navbar-cart-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--brand-primary);
+    color: #ffffff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2.5px solid var(--bg-accent);
+}
+
+.user-profile-v2 {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding-left: 0.5rem;
+    cursor: pointer;
+}
+
+.user-avatar-v2 {
+    width: 54px;
+    height: 54px;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+}
+
+.user-avatar-v2 img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-chevron {
+    color: var(--text-secondary);
+    opacity: 0.5;
+}

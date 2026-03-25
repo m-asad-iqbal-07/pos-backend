@@ -6,6 +6,7 @@ import { Button } from '../ui/Button';
 import { Spinner } from '../ui/Spinner';
 import { formatCurrency } from '../../lib/utils';
 import { X, Plus, Minus, ShoppingBag } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import '../../styles/Modal.css';
 
 interface AddOnModalProps {
@@ -18,6 +19,7 @@ export function AddOnModal({ item, onClose }: AddOnModalProps) {
     const { addItem } = useCart();
     const [selectedAddons, setSelectedAddons] = useState<Addon[]>([]);
     const [quantity, setQuantity] = useState(1);
+    const navigate = useNavigate();
 
     const toggleAddon = (addon: Addon) => {
         setSelectedAddons(prev =>
@@ -33,6 +35,7 @@ export function AddOnModal({ item, onClose }: AddOnModalProps) {
     const handleAddToCart = () => {
         addItem(item, selectedAddons, quantity);
         onClose();
+        navigate('/cart');
     };
 
     return (

@@ -18,25 +18,37 @@ export function MenuGrid() {
         setSelectedItem(item);
     };
 
+    const getImageUrl = (item: MenuItem) => {
+        const name = item.name.toLowerCase();
+        if (name.includes('espresso')) return '/images/espresso.png';
+        if (name.includes('cappuccino') || name.includes('latte')) return '/images/cappuccino.png';
+        if (name.includes('cold') || name.includes('ice')) return '/images/cold-brew.png';
+        if (name.includes('croissant') || name.includes('cake') || name.includes('pastry')) return '/images/pastry.png';
+        if (name.includes('tea') || name.includes('matcha')) return '/images/tea.png';
+        return '/images/espresso.png'; // Default
+    };
+
     return (
         <div className="menu-container">
             {/* Category Tabs */}
-            <div className="category-tabs">
-                <button
-                    className={`category-tab ${activeCategoryId === null ? 'active' : ''}`}
-                    onClick={() => setActiveCategoryId(null)}
-                >
-                    All Items
-                </button>
-                {isCatsLoading ? <Spinner size={16} /> : categories?.map(cat => (
+            <div className="category-tabs-container">
+                <div className="category-tabs">
                     <button
-                        key={cat.id}
-                        className={`category-tab ${activeCategoryId === cat.id ? 'active' : ''}`}
-                        onClick={() => setActiveCategoryId(cat.id)}
+                        className={`category-pill ${activeCategoryId === null ? 'active' : ''}`}
+                        onClick={() => setActiveCategoryId(null)}
                     >
-                        {cat.name}
+                        All
                     </button>
-                ))}
+                    {isCatsLoading ? <Spinner size={16} /> : categories?.map(cat => (
+                        <button
+                            key={cat.id}
+                            className={`category-pill ${activeCategoryId === cat.id ? 'active' : ''}`}
+                            onClick={() => setActiveCategoryId(cat.id)}
+                        >
+                            {cat.name}
+                        </button>
+                    ))}
+                </div>
             </div>
 
             {/* Item Grid */}
@@ -48,24 +60,23 @@ export function MenuGrid() {
                 ) : (
                     <div className="items-grid">
                         {menuItems?.map(item => (
-                            <Card
+                            <div
                                 key={item.id}
-                                className={`menu-item-card ${item.stock_qty === 0 ? 'out-of-stock' : 'in-stock'}`}
+                                className={`cafe-item-card ${item.stock_qty === 0 ? 'out-of-stock' : 'in-stock'}`}
                                 onClick={() => handleItemClick(item)}
-                                style={{ cursor: item.stock_qty === 0 ? 'not-allowed' : 'pointer' }}
                             >
-                                <div className="item-price-tag">{formatCurrency(item.price)}</div>
-                                <div className="item-info">
+                                <div className="card-image-wrapper">
+                                    <img src={getImageUrl(item)} alt={item.name} className="item-card-image" />
+                                    <div className="item-price-badge">{formatCurrency(item.price)}</div>
+                                </div>
+                                <div className="item-details">
                                     <h4 className="item-name">{item.name}</h4>
-                                    <p className="item-category text-secondary text-sm">{item.category_name}</p>
+                                    <p className="item-category">{item.category_name}</p>
                                 </div>
                                 {item.stock_qty === 0 && (
-                                    <div className="stock-overlay">Sold Out</div>
+                                    <div className="sold-out-badge">Sold Out</div>
                                 )}
-                                {item.stock_qty > 0 && item.stock_qty <= 10 && (
-                                    <div className="stock-warning">Only {item.stock_qty} left</div>
-                                )}
-                            </Card>
+                            </div>
                         ))}
                     </div>
                 )}

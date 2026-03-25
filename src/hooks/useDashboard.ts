@@ -120,3 +120,29 @@ export function useCustomerInsights({ startDate, endDate }: DashboardFilters) {
         }
     });
 }
+
+// 9.10 Profit & Loss
+export function useProfitLoss({ startDate, endDate }: DashboardFilters) {
+    return useQuery({
+        queryKey: ['dashboard', 'profit-loss', startDate, endDate],
+        queryFn: async () => {
+            const { data } = await apiClient.get('/dashboard/profit-loss', {
+                params: { start_date: startDate, end_date: endDate }
+            });
+            return data;
+        }
+    });
+}
+
+// 9.11 Shift Summary
+export function useShiftSummary({ startDate, endDate }: DashboardFilters) {
+    return useQuery({
+        queryKey: ['dashboard', 'shift-summary', startDate, endDate],
+        queryFn: async () => {
+            const { data } = await apiClient.get('/dashboard/shift-summary', {
+                params: { start_date: startDate, end_date: endDate }
+            });
+            return data;
+        }
+    });
+}
